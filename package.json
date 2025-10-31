@@ -10,6 +10,7 @@
     "postinstall": "node -e \"console.log('Ready to run: npx shadcn@latest init')\""
   },
   "dependencies": {
+    "critters": "^0.0.20"
     "next": "14.2.12",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -18,7 +19,6 @@
     "clsx": "2.1.1",
     "tailwind-merge": "2.5.2",
     "tailwindcss-animate": "1.0.7"
-    "critters": "^0.0.20"
   },
   "devDependencies": {
     "@types/node": "20.11.30",
