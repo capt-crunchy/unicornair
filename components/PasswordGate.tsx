@@ -1,40 +1,44 @@
+"use client";
+import { useState, useEffect } from "react";
 
-'use client'
-import React, { useState, useEffect } from 'react'
+export default function PasswordGate({ children }) {
+  const [password, setPassword] = useState("");
+  const [auth, setAuth] = useState(false);
 
-export default function PasswordGate({ children }:{ children: React.ReactNode }){
-  const [ok, setOk] = useState(false)
-  const [err, setErr] = useState<string|null>(null)
-  const [pw, setPw] = useState('')
+  useEffect(() => {
+    const stored = window.localStorage.getItem("ops_auth");
+    if (stored === "yes") setAuth(true);
+  }, []);
 
-  useEffect(()=>{
-    const cached = sessionStorage.getItem('ua_admin_ok')
-    if (cached === '1') setOk(true)
-  }, [])
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const correct = process.env.NEXT_PUBLIC_OPS_PASSWORD || process.env.OPS_PASSWORD;
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setErr(null)
-    const res = await fetch('/api/auth/check', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ password: pw })})
-    if(res.ok){
-      sessionStorage.setItem('ua_admin_ok', '1')
-      setOk(true)
+    if (password === correct) {
+      window.localStorage.setItem("ops_auth", "yes");
+      setAuth(true);
     } else {
-      setErr('Incorrect password')
+      alert("Wrong password");
     }
-  }
+  };
 
-  if (ok) return <>{children}</>
+  if (auth) return children;
 
   return (
-    <div className="min-h-[60vh] grid place-items-center">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl bg-[#0b0f14]/80 border border-cyan-900/40 shadow-card p-4">
-        <h2 className="text-xl font-bold mb-2">Ops Admin Access</h2>
-        <p className="text-cyan-200/80 text-sm mb-3">Enter the admin password to open the ops dashboard.</p>
-        <input className="w-full bg-black/50 border border-cyan-900/40 rounded-xl px-3 py-2" type="password" placeholder="Admin password" value={pw} onChange={e=>setPw(e.target.value)} />
-        {err && <p className="text-red-400 text-sm mt-2">{err}</p>}
-        <button className="mt-3 btn btn-primary w-full" type="submit">Enter</button>
+    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+      <h1 className="text-3xl font-bold mb-4">🛑 Ops Restricted</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-64">
+        <input
+          type="password"
+          placeholder="Enter ops password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border border-gray-700 rounded p-2"
+        />
+        <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white rounded p-2">
+          Enter Ops
+        </button>
       </form>
     </div>
-  )
+  );
 }
