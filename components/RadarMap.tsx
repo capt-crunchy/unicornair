@@ -2,38 +2,29 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import L, { Icon, LatLngExpression } from "leaflet";
+import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
-
-// Fix Leaflet default icon paths in Next.js
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "/markers/default-marker-2x.png",
-  iconUrl: "/markers/default-marker.png",
-  shadowUrl: "/markers/default-shadow.png",
-});
-
-// Import rotated marker plugin
 import "leaflet-rotatedmarker";
 
-// Load components only client-side
+// Load react-leaflet only in browser
 const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  () => import("react-leaflet").then((m) => m.MapContainer),
   { ssr: false }
 );
 const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  () => import("react-leaflet").then((m) => m.TileLayer),
   { ssr: false }
 );
 const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
+  () => import("react-leaflet").then((m) => m.Marker),
   { ssr: false }
 );
 const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
+  () => import("react-leaflet").then((m) => m.Popup),
   { ssr: false }
 );
 
+// Aircraft data shape
 interface Aircraft {
   callsign: string;
   lat: number;
@@ -44,60 +35,63 @@ interface Aircraft {
   timestamp: number;
 }
 
-// Your unicorn aircraft icon
-import L from "leaflet";
-import "leaflet-rotatedmarker";
+// Fix Leaflet default icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "/assets/unicorn-plane.png",
+  iconUrl: "/assets/unicorn-plane.png",
+  shadowUrl: "",
+});
 
+// Custom unicorn icon
 const planeIcon = L.icon({
   iconUrl: "/assets/unicorn-plane.png",
   iconSize: [48, 48],
-  iconAnchor: [24, 24], // center of icon
+  iconAnchor: [24, 24],
 });
-
 
 export default function RadarMap() {
   const [planes, setPlanes] = useState<Record<string, Aircraft>>({});
 
   useEffect(() => {
-    const fetchPlanes = async () => {
+    const interval = setInterval(async () => {
       try {
         const res = await fetch("/api/aircraft");
+        if (!res.ok) return;
         const data = await res.json();
         setPlanes(data);
       } catch (err) {
-        console.error("Aircraft fetch failed", err);
+        console.error(err);
       }
-    };
-
-    fetchPlanes();
-    const interval = setInterval(fetchPlanes, 2000);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="p-4">
       <MapContainer
-        center={[47.629, -122.350]} // Seattle default
+        center={[47.629, -122.350] as LatLngExpression}
         zoom={6}
         className="h-[80vh] w-full rounded-lg border border-purple-700/40"
-        style={{ background: "#000" }}
       >
         <TileLayer
-          url={`https://tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?access-token=${process.env.NEXT_PUBLIC_JAWG_TOKEN}`} />
+          url={`https://tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?access-token=${process.env.NEXT_PUBLIC_JAWG_TOKEN}`}
+        />
 
-        {Object.entries(planes).map(([id, ac]) => (
+        {Object.values(planes).map((ac) => (
           <Marker
-            key={id}
+            key={ac.callsign}
             position={[ac.lat, ac.lon] as LatLngExpression}
             icon={planeIcon}
             rotationAngle={ac.hdg}
             rotationOrigin="center"
           >
             <Popup>
-              <b>{ac.callsign}</b><br />
-              Alt: {Math.round(ac.alt)} ft<br />
-              GS: {Math.round(ac.gs)} kts<br />
-              HDG: {Math.round(ac.hdg)}°
+              <b>{ac.callsign}</b>
+              <br />
+              ALT: {Math.round(ac.alt)} ft
+              <br />
+              GS: {Math.round(ac.gs)} kts
             </Popup>
           </Marker>
         ))}
