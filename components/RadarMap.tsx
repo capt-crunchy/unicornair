@@ -21,29 +21,26 @@ interface Aircraft {
   hdg: number;
 }
 
-// Purple unicorn icon 🎨🦄
-function createPlaneIcon(heading: number) {
-  return L.divIcon({
-    html: `<div style="
-      transform: rotate(${heading}deg);
-      width: 36px; height: 36px;
-      background-size: contain;
-      background-image: url('https://i.imgur.com/CUZ8eJW.png');
-    "></div>`,
-    iconSize: [36, 36],
-    className: ""
-  });
-}
-
+// ✅ Safe icon (test icon) — *do not change until we see it working*
+const planeIcon = L.icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
 
 export default function RadarMap() {
   const [planes, setPlanes] = useState<Record<string, Aircraft>>({});
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const res = await fetch("/api/position");
-      const data = await res.json();
-      setPlanes(data);
+      try {
+        const res = await fetch("/api/position");
+        const json = await res.json();
+        console.log("Planes:", json);
+        setPlanes(json);
+      } catch (e) {
+        console.error("Radar fetch error", e);
+      }
     }, 2000);
 
     return () => clearInterval(interval);
@@ -57,23 +54,22 @@ export default function RadarMap() {
         className="h-[80vh] w-full rounded-lg border border-purple-700/40"
         style={{ background: "#000" }}
       >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <TileLayer
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
 
-        {Object.values(planes).map((ac: Aircraft) => (
+        {/* ✅ DRAW PLANES */}
+        {Object.values(planes).map((ac) => (
           <Marker
-  key={ac.callsign}
-  position={[ac.lat, ac.lon] as L.LatLngExpression}
-  const planeIcon = L.icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
->
+            key={ac.callsign}
+            position={[ac.lat, ac.lon] as L.LatLngExpression}
+            icon={planeIcon}
+          >
             <Popup>
-              <b>{ac.callsign}</b><br/>
-              Alt: {Math.round(ac.alt)} ft<br/>
-              GS: {Math.round(ac.gs)} kts<br/>
+              <b>{ac.callsign}</b><br />
+              Alt: {Math.round(ac.alt)} ft<br />
+              GS: {Math.round(ac.gs)} kts<br />
               HDG: {Math.round(ac.hdg)}°
             </Popup>
           </Marker>
