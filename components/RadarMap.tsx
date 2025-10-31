@@ -23,8 +23,7 @@ export default function RadarMap() {
 
   return (
 <MapContainer
-  // Type cast to satisfy React-Leaflet types
-  center={[47.629, -122.350] as [number, number]}
+  center={[47.629, -122.350] as L.LatLngExpression}
   zoom={6}
   className="h-[80vh] w-full rounded-lg border border-purple-700/40"
   style={{ background: "#000" }}
