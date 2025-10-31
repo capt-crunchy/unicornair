@@ -22,15 +22,14 @@ export default function RadarMap() {
   }, []);
 
   return (
-    <MapContainer
-      center={[47.629, -122.350]} // Seattle as default
-      zoom={6}
-      className="h-[80vh] w-full rounded-lg border border-purple-700/40"
-      style={{ background: "#000" }}
-    >
-      <TileLayer
-        url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-      />
+<MapContainer
+  // Type cast to satisfy React-Leaflet types
+  center={[47.629, -122.350] as [number, number]}
+  zoom={6}
+  className="h-[80vh] w-full rounded-lg border border-purple-700/40"
+  style={{ background: "#000" }}
+>
+
 
       {planes.map((p) => (
         <>
