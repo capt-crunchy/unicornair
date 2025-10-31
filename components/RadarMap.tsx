@@ -1,18 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import "@/styles/leaflet.css";
 
 import L from "leaflet";
 
-// Load rotated marker AFTER Leaflet exists
+// Load rotated marker only in browser
 if (typeof window !== "undefined") {
   require("leaflet-rotatedmarker");
 }
 
 import { TileLayer, Marker, Popup } from "react-leaflet";
-
 
 interface Aircraft {
   callsign: string;
