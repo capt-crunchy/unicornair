@@ -45,12 +45,15 @@ interface Aircraft {
 }
 
 // Your unicorn aircraft icon
-const planeIcon = new Icon({
-  iconUrl: "/assets/unicorn_plane.png",
-  iconSize: [50, 50],
-  iconAnchor: [25, 25],
-  popupAnchor: [0, -20],
+import L from "leaflet";
+import "leaflet-rotatedmarker";
+
+const planeIcon = L.icon({
+  iconUrl: "/assets/unicorn-plane.png",
+  iconSize: [48, 48],
+  iconAnchor: [24, 24], // center of icon
 });
+
 
 export default function RadarMap() {
   const [planes, setPlanes] = useState<Record<string, Aircraft>>({});
