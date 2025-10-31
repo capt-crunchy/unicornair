@@ -1,55 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, CircleMarker, Polyline } from "react-leaflet";
+import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import "@/styles/leaflet.css";
+import L from "leaflet";
+import { TileLayer } from "react-leaflet";
 
+const MapContainer = dynamic(
+  async () => (await import("react-leaflet")).MapContainer,
+  { ssr: false }
+);
 
 export default function RadarMap() {
-  const [planes, setPlanes] = useState<any[]>([]);
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch("/api/telemetry");
-        const data = await res.json();
-        setPlanes(data || []);
-      } catch {}
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-<MapContainer
-  center={[47.629, -122.350] as L.LatLngExpression}
-  zoom={6}
-  className="h-[80vh] w-full rounded-lg border border-purple-700/40"
-  style={{ background: "#000" }}
->
-
-      {planes.map((p) => (
-        <>
-          <CircleMarker
-            key={p.id}
-            center={[p.lat, p.lon]}
-            radius={6}
-            color="#a855f7"
-            fillColor="#c084fc"
-            fillOpacity={0.9}
-          />
-
-          {p.trail && (
-            <Polyline
-              positions={p.trail}
-              color="#a855f7"
-              weight={2}
-              opacity={0.4}
-            />
-          )}
-        </>
-      ))}
-    </MapContainer>
+    <div className="p-4">
+      <MapContainer
+        center={[47.629, -122.350] as L.LatLngExpression}
+        zoom={6}
+        className="h-[80vh] w-full rounded-lg border border-purple-700/40"
+        style={{ background: "#000" }}
+      >
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+      </MapContainer>
+    </div>
   );
 }
