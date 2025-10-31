@@ -30,7 +30,6 @@ export default function RadarMap() {
   style={{ background: "#000" }}
 >
 
-
       {planes.map((p) => (
         <>
           <CircleMarker
