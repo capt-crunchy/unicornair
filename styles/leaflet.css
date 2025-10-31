@@ -1,0 +1,8 @@
+.leaflet-container {
+  background: #000;
+}
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  pointer-events: none;
+}
