@@ -45,9 +45,10 @@ L.Icon.Default.mergeOptions({
 
 // Custom unicorn icon
 const planeIcon = L.icon({
-  iconUrl: "/assets/unicorn-plane.png",
+  iconUrl: "/assets/unicorn-plane.svg",
   iconSize: [48, 48],
   iconAnchor: [24, 24],
+  popupAnchor: [0, -28],
 });
 
 export default function RadarMap() {
