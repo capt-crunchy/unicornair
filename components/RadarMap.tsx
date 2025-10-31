@@ -31,7 +31,7 @@ type Aircraft = {
 
 // ✅ Unicorn icon
 const planeIcon = new Icon({
-  iconUrl: "/public/assets/unicorn_plane.png",
+  iconUrl: "/assets/unicorn_plane.png",
   iconSize: [45, 45],
   iconAnchor: [22, 22], // center
   popupAnchor: [0, -20],
