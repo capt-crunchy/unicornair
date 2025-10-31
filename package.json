@@ -21,6 +21,7 @@
     "tailwindcss-animate": "1.0.7",
     "react-leaflet": "^4.2.1",
     "leaflet": "^1.9.4"
+    "leaflet-rotatedmarker": "^0.2.0",
 
   },
   "devDependencies": {
