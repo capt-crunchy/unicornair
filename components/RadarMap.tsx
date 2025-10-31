@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "@/styles/leaflet.css";
+
 
 export default function RadarMap() {
   const [planes, setPlanes] = useState<any[]>([]);
