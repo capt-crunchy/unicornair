@@ -22,11 +22,19 @@ interface Aircraft {
 }
 
 // Purple unicorn icon 🎨🦄
-const planeIcon = L.icon({
-  iconUrl: "https://i.imgur.com/CUZ8eJW.png", // ✅ temp icon (we can replace with your custom one)
-  iconSize: [36, 36],
-  iconAnchor: [18, 18]
-});
+function createPlaneIcon(heading: number) {
+  return L.divIcon({
+    html: `<div style="
+      transform: rotate(${heading}deg);
+      width: 36px; height: 36px;
+      background-size: contain;
+      background-image: url('https://i.imgur.com/CUZ8eJW.png');
+    "></div>`,
+    iconSize: [36, 36],
+    className: ""
+  });
+}
+
 
 export default function RadarMap() {
   const [planes, setPlanes] = useState<Record<string, Aircraft>>({});
@@ -53,10 +61,10 @@ export default function RadarMap() {
 
         {Object.values(planes).map((ac: Aircraft) => (
           <Marker
-            key={ac.callsign}
-            position={[ac.lat, ac.lon] as L.LatLngExpression}
-            icon={planeIcon}
-          >
+  key={ac.callsign}
+  position={[ac.lat, ac.lon] as L.LatLngExpression}
+  icon={createPlaneIcon(ac.hdg)}
+>
             <Popup>
               <b>{ac.callsign}</b><br/>
               Alt: {Math.round(ac.alt)} ft<br/>
