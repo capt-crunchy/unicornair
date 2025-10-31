@@ -1,13 +1,27 @@
-import { NextResponse } from "next/server";
+let aircraftState: Record<string, any> = {};
 
-let latestData: any = {};
+export async function POST(req: Request) {
+  const data = await req.json();
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  latestData = body;
-  return NextResponse.json({ status: "ok" });
+  // ✅ If payload is direct plane data, wrap it by callsign
+  if (data.callsign) {
+    aircraftState[data.callsign] = {
+      ...data,
+      timestamp: Date.now()
+    };
+  } else {
+    // ✅ If properly keyed by callsign, use as-is
+    for (const key in data) {
+      aircraftState[key] = {
+        ...data[key],
+        timestamp: Date.now()
+      };
+    }
+  }
+
+  return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
 }
 
 export async function GET() {
-  return NextResponse.json(latestData);
+  return Response.json(aircraftState);
 }
