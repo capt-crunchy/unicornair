@@ -68,10 +68,12 @@ export default function RadarMap() {
         />
 
         {Object.values(planes).map((ac) => (
-          <Marker
-  position={[ac.lat, ac.lon] as LatLngExpression}
-  icon={planeIcon}
->
+       <Marker
+        position={[ac.lat, ac.lon] as LatLngExpression}
+        icon={planeIcon}
+        rotationAngle={ac.hdg}
+        >
+
             <Popup>
               <b>{ac.callsign}</b><br/>
               Alt: {Math.round(ac.alt)} ft<br/>
