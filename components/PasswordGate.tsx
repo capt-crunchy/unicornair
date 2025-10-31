@@ -10,7 +10,7 @@ export default function PasswordGate({ children }: { children: React.ReactNode }
     if (stored === "yes") setAuth(true);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const correct = process.env.NEXT_PUBLIC_OPS_PASSWORD || process.env.OPS_PASSWORD;
 
