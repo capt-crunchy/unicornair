@@ -22,10 +22,11 @@ interface Aircraft {
 }
 
 // ✅ Safe icon (test icon) — *do not change until we see it working*
-const planeIcon = L.icon({
-  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+const planeIcon = new L.Icon({
+  iconUrl: "/plane.png",
+  iconSize: [48, 48],       // adjust icon size here
+  iconAnchor: [24, 24],     // ensures rotation center is the middle
+  className: "plane-icon"
 });
 
 export default function RadarMap() {
