@@ -31,9 +31,10 @@ type Aircraft = {
 
 // ✅ Unicorn icon
 const planeIcon = new Icon({
-  iconUrl: "/assets/unicorn_plane.png", // make sure file exists in /public/assets/
-  iconSize: [50, 50],
-  iconAnchor: [25, 25],
+  iconUrl: "/assets/unicorn_plane.png",
+  iconSize: [45, 45],
+  iconAnchor: [22, 22], // center
+  popupAnchor: [0, -20],
 });
 
 export default function RadarMap() {
