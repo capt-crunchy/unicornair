@@ -4,31 +4,36 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import "@/styles/leaflet.css";
+import L, { LatLngExpression, Icon } from "leaflet";
 
-import L from "leaflet";
-
-// Load rotated marker only in browser
+// Load rotated marker ONLY in browser
 if (typeof window !== "undefined") {
   require("leaflet-rotatedmarker");
 }
 
 import { TileLayer, Marker, Popup } from "react-leaflet";
 
-interface Aircraft {
+// ✅ Dynamic import for MapContainer (fixes Next.js SSR issues)
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+
+type Aircraft = {
   callsign: string;
   lat: number;
   lon: number;
   alt: number;
   gs: number;
   hdg: number;
-}
+  timestamp: number;
+};
 
-// ✅ Safe icon (test icon) — *do not change until we see it working*
-const planeIcon = new L.Icon({
-  iconUrl: "/plane.png",
-  iconSize: [48, 48],       // adjust icon size here
-  iconAnchor: [24, 24],     // ensures rotation center is the middle
-  className: "plane-icon"
+// ✅ Unicorn icon
+const planeIcon = new Icon({
+  iconUrl: "/assets/unicorn_plane.png", // make sure file exists in /public/assets/
+  iconSize: [50, 50],
+  iconAnchor: [25, 25],
 });
 
 export default function RadarMap() {
@@ -37,12 +42,11 @@ export default function RadarMap() {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch("/api/position");
-        const json = await res.json();
-        console.log("Planes:", json);
-        setPlanes(json);
-      } catch (e) {
-        console.error("Radar fetch error", e);
+        const res = await fetch("/api/flightpos");
+        const data = await res.json();
+        setPlanes(data);
+      } catch (err) {
+        console.error("Radar fetch error", err);
       }
     }, 2000);
 
@@ -52,27 +56,27 @@ export default function RadarMap() {
   return (
     <div className="p-4">
       <MapContainer
-        center={[47.629, -122.350] as L.LatLngExpression}
+        center={[47.629, -122.350] as LatLngExpression} // Seattle default
         zoom={6}
         className="h-[80vh] w-full rounded-lg border border-purple-700/40"
         style={{ background: "#000" }}
       >
         <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://carto.com/">Carto</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
         />
 
-        {/* ✅ DRAW PLANES */}
         {Object.values(planes).map((ac) => (
           <Marker
             key={ac.callsign}
-            position={[ac.lat, ac.lon] as L.LatLngExpression}
+            position={[ac.lat, ac.lon] as LatLngExpression}
             icon={planeIcon}
+            rotationAngle={ac.hdg}
           >
             <Popup>
-              <b>{ac.callsign}</b><br />
-              Alt: {Math.round(ac.alt)} ft<br />
-              GS: {Math.round(ac.gs)} kts<br />
+              <b>{ac.callsign}</b><br/>
+              Alt: {Math.round(ac.alt)} ft<br/>
+              GS: {Math.round(ac.gs)} kts<br/>
               HDG: {Math.round(ac.hdg)}°
             </Popup>
           </Marker>
