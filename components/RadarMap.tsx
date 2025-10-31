@@ -56,7 +56,6 @@ export default function RadarMap() {
             key={ac.callsign}
             position={[ac.lat, ac.lon] as L.LatLngExpression}
             icon={planeIcon}
-            rotationAngle={ac.hdg}
           >
             <Popup>
               <b>{ac.callsign}</b><br/>
