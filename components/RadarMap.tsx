@@ -78,23 +78,23 @@ export default function RadarMap() {
           url={`https://tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?access-token=${process.env.NEXT_PUBLIC_JAWG_TOKEN}`}
         />
 
-        {Object.values(planes).map((ac) => (
-          <Marker
-            key={ac.callsign}
-            position={[ac.lat, ac.lon] as LatLngExpression}
-            icon={planeIcon}
-            rotationAngle={ac.hdg}
-            rotationOrigin="center"
-          >
-            <Popup>
-              <b>{ac.callsign}</b>
-              <br />
-              ALT: {Math.round(ac.alt)} ft
-              <br />
-              GS: {Math.round(ac.gs)} kts
-            </Popup>
-          </Marker>
-        ))}
+{Object.values(planes)
+  .filter(ac => ac.lat && ac.lon) // ✅ only valid coords
+  .map((ac) => (
+    <Marker
+      key={ac.callsign}
+      position={[ac.lat, ac.lon] as LatLngExpression}
+      icon={planeIcon}
+      rotationAngle={ac.hdg}
+      rotationOrigin="center"
+    >
+      <Popup>
+        <b>{ac.callsign}</b><br />
+        Alt: {Math.round(ac.alt)} ft<br/>
+        GS: {Math.round(ac.gs)} kts
+      </Popup>
+    </Marker>
+))}
       </MapContainer>
     </div>
   );
