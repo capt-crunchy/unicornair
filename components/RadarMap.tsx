@@ -63,7 +63,12 @@ export default function RadarMap() {
           <Marker
   key={ac.callsign}
   position={[ac.lat, ac.lon] as L.LatLngExpression}
-  icon={createPlaneIcon(ac.hdg)}
+  const planeIcon = L.icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
 >
             <Popup>
               <b>{ac.callsign}</b><br/>
