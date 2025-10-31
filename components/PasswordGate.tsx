@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function PasswordGate({ children }) {
+export default function PasswordGate({ children }: { children: React.ReactNode }) {
   const [password, setPassword] = useState("");
   const [auth, setAuth] = useState(false);
 
