@@ -79,7 +79,8 @@ export default function RadarMap() {
         className="h-[80vh] w-full rounded-lg border border-purple-700/40"
         style={{ background: "#000" }}
       >
-        <TileLayer url="https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=RFrz2mxQ9I9gRuWO4A7E7CP2ys0UXw1FgNVJqE7S0T8i6mz1BTsgDrIxX6ch0Y42" />
+        <TileLayer
+          url={`https://tile.jawg.io/jawg-dark/{z}/{x}/{y}.png?access-token=${process.env.NEXT_PUBLIC_JAWG_TOKEN}`} />
 
         {Object.entries(planes).map(([id, ac]) => (
           <Marker
