@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pilot {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  callsign  String   @unique
+  display   String
+  role      Role     @default(PILOT)
+  hours     Int      @default(0)
+  rank      String   @default("Cadet")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pireps    PIREP[]
+  positions Position[]
+}
+
+model Aircraft {
+  id        String   @id @default(cuid())
+  type      String   // A20N, C208…
+  reg       String   @unique // N659UV…
+  hub       String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  flights   Flight[]
+}
+
+model Flight {
+  id         String   @id @default(cuid())
+  number     String   // UCA659
+  dep        String   // KGEG
+  arr        String   // KSEA
+  schedOff   DateTime?
+  schedOn    DateTime?
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  aircraft   Aircraft? @relation(fields: [aircraftId], references: [id])
+  aircraftId String?
+  pireps     PIREP[]
+}
+
+model PIREP {
+  id        String   @id @default(cuid())
+  pilotId   String
+  flightId  String?
+  callsign  String
+  dep       String
+  arr       String
+  blockOff  DateTime?
+  blockOn   DateTime?
+  flightTime Int     @default(0) // minutes
+  fuelUsed   Int     @default(0) // kg / lbs - your choice later
+  status     PirepStatus @default(PENDING)
+  remarks    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pilot   Pilot   @relation(fields: [pilotId], references: [id])
+  flight  Flight? @relation(fields: [flightId], references: [id])
+}
+
+model Position {
+  id        String   @id @default(cuid())
+  pilotId   String
+  callsign  String
+  lat       Float
+  lon       Float
+  alt       Float   // feet
+  gs        Float   // knots
+  hdg       Float   // degrees
+  when      DateTime @default(now())
+
+  pilot     Pilot   @relation(fields: [pilotId], references: [id])
+}
+
+enum Role { ADMIN STAFF PILOT }
+enum PirepStatus { PENDING APPROVED REJECTED }
