@@ -23,6 +23,7 @@
     "react-leaflet": "^4.2.1",
     "leaflet": "^1.9.4",
     "tweetnacl": "^1.0.3"
+    "prisma": "^5.18.0", "@prisma/client": "^5.18.0"
     
 
   },
