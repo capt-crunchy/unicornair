@@ -21,7 +21,8 @@
     "tailwind-merge": "2.5.2",
     "tailwindcss-animate": "1.0.7",
     "react-leaflet": "^4.2.1",
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "tweetnacl": "^1.0.3"
     
 
   },
